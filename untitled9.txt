@@ -1,0 +1,26 @@
+     2.10           OBSERVATION DATA    G (GPS)             RINEX VERSION / TYPE
+teqc  2000Jul20     GRD/NGS/NOAA        20010102 00:45:05UTCPGM / RUN BY / DATE
+HP-UX 10.20|PA-RISC|cc A.10.32.03|=+|=|                     COMMENT
+BIT 2 OF LLI FLAGS DATA COLLECTED UNDER A/S CONDITION       COMMENT
+TMGO                                                        MARKER NAME
+GRD/NGS/NOAA        GRD/NGS/NOAA                            OBSERVER / AGENCY
+T314                ROGUE SNR-8000      3.2.32.11           REC # / TYPE / VERS
+162                 AOAD/M_T                                ANT # / TYPE
+ -1283387.6627 -4713015.5351  4090190.4704                  APPROX POSITION XYZ
+        0.0000        0.0000        0.0000                  ANTENNA: DELTA H/E/N
+     1     1                                                WAVELENGTH FACT L1/2
+     5    C1    L1    L2    P1    P2                        # / TYPES OF OBSERV
+    30.0000                                                 INTERVAL
+ SNR is mapped to RINEX snr flag value [1,4-9]              COMMENT
+    SNR:   >316  >100  >31.6  >10  >3.2    >0 bad=0         COMMENT
+L1 & L2:      9     8     7     6     5     4     1         COMMENT
+  2001     1     1     0     0    0.0000000     GPS         TIME OF FIRST OBS
+                                                            END OF HEADER
+ 01  1  1  0  0  0.0000000  0  7G24G 9G20G 7G 5G 2G 4
+  22200209.9274  -14747630.61449 -11491637.45044                  22200214.3334
+  21712423.3234  -16236839.88349 -12652053.35144                  21712426.3404
+  24250960.4734   -1617014.39148  -1260004.67544                  24250964.1284
+  21285989.1764  -18849556.90049 -14687928.74244                  21285991.9364
+  23587189.4134   -8422473.53649  -6562947.93444                  23587195.4004
+  22028338.6574  -16291691.38849 -12694802.03044                  22028342.3014
+  20226771.2484  -24628239.03649 -19190796.23245                  20226772.9074
