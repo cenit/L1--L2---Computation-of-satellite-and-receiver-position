@@ -79,11 +79,17 @@ dtsL1_with_dtr = dtsL1 + dtr; % (24)
 %% 9. Compute tropospheric correction T_A_to_s (tA)
 %% 10. Compute ionospheric correction I_A_to_s (tA)
 %% 11. Compute approximate distance rho_A0_to_s (tA) by (11).
+dts = 0; % terms with dts are negligible, so I set it to zero
+XA0 = Xs; % 
+YA0 = Ys; % approximate receiver coordinates
+ZA0 = Zs; %
 rho_A0_to_s = sqrt(...
     (Xs - XA0 + omega_e_dot*YA0*dts)^2 + ... % x^2
     (Ys - YA0 + omega_e_dot*XA0*dts)^2 + ... % y^2
-    (Zs)^2   ... % z^2
+    (Zs - ZA0)^2   ... % z^2
 );
+dtA = 0;
+rho_A_to_s = P1 + c*dtsL1_with_dtr - c*dtA; % (8) dtA =\= 0 
 %% 12. Repeat steps 1 - 11 for all measured satellites.
 %% 13. Compute elements of vector L (19).
 %% 14. Compute elements of matrix A (20); a_x_to_s , a_y_to_s , a_z_to_s by (12)
