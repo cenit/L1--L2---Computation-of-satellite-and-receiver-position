@@ -1,5 +1,6 @@
 %% Computation of receiver's position
 addpath('/Users/kevin/SkyDrive/KTH Work/Period 4 2014/GNSS/Labs/L1, L2 - Computation of satellite and receiver position')
+cd('/Users/kevin/SkyDrive/KTH Work/Period 4 2014/GNSS/Labs/L1, L2 - Computation of satellite and receiver position')
 clear all;
 clc;
 c = 299792458; % speed of light (m/s)
@@ -21,6 +22,9 @@ sat = num2cell(sat);
     idot,       ~,          ~,          ~,...
     ~,          ~,          tgd,        ~]...
     =sat{:};
+%% Import P1 numbers and satellite numbers
+p1_numbers = importObsP1numbers('0lov033b.04o', 1370, 1392);
+satelliteNumbers = importObsSatelliteNumbers('0lov033b.04o', 1370, 1370);
 %% Compute signal propagation time by (13)
 P1 = 23640467.92143;
 ta_nom = seconds_in_week(1,1,14,0); % 1 hour and 14 minutes
