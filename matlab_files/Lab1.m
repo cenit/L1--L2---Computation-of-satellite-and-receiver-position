@@ -10,7 +10,10 @@ F = -4.442807633e-10; % s/m^1/2
 navfiles = importNavigationFiles('0lov033b.04n');
 i = 1:8:112;
 sat = navfiles(1:8,:);
-sat = cell2mat(sat);
+sat = transpose(cell2mat(sat));
+sat = num2cell(sat);
+% Imports numbers to all variables
+[satnumber,af0,af1,af2,iode,crs,dn,m0,cuc,ec,cus,sqrtA,toe,cic,omega0,cis,i0,crc,w,omegadot,idot,codeOnL2,weekNumber,L2_Pdataflag,sv_accuracy,sv_health,tgd,iodc]=sat{:};
 %% Compute signal propagation time by (13)
 P1 = 23640467.92143;
 ta_nom = seconds_in_week(1,1,14,0); % 1 hour and 14 minutes
