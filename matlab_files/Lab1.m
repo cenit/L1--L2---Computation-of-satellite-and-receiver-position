@@ -23,10 +23,10 @@ sat = num2cell(sat);
     ~,          ~,          tgd,        ~]...
     =sat{:};
 %% Import P1 numbers and satellite numbers
-p1_numbers = importObsP1numbers('0lov033b.04o', 1370, 1392);
+p1_numbers = importObsP1numbers('0lov033b.04o', 1371, 1392);
 satelliteNumbers = importObsSatelliteNumbers('0lov033b.04o', 1370, 1370);
 %% Compute signal propagation time by (13)
-P1 = 23640467.92143;
+P1 = p1_numbers(1);
 ta_nom = seconds_in_week(1,1,14,0); % 1 hour and 14 minutes
 tAtoS = P1/c; % signal propagation time
 %% Compute signal transmission time by (14)
