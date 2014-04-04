@@ -6,6 +6,10 @@ c = 299792458; % speed of light (m/s)
 mu = 3.986005e14; % universal gravitational parameter (m/s)^3
 omega_e_dot = 7.2921151467e-5; % earth rotation rate (rad/s)
 F = -4.442807633e-10; % s/m^1/2
+%% Import navigation file
+navfiles = importNavigationFiles('0lov033b.04n');
+i = 1:8:112;
+sat2 = navfiles(1:8,:);
 %% Compute signal propagation time by (13)
 P1 = 23640467.92143;
 ta_nom = seconds_in_week(1,1,14,0); % 1 hour and 14 minutes
@@ -14,7 +18,7 @@ tAtoS = P1/c; % signal propagation time
 ts_nom = ta_nom - tAtoS;
 %% Compute satellite clock correction dtsL1
 % by (24) and (25), neglect dtr
-af0 = -3.137718886140D-05;
+af0 = sat2(1,2);
 af1 = 2.273736754430D-13;
 af2 = 0.000000000000D+00;
 tgd = -1.117587089540D-08;
@@ -80,16 +84,16 @@ dtsL1_with_dtr = dtsL1 + dtr; % (24)
 %% 10. Compute ionospheric correction I_A_to_s (tA)
 %% 11. Compute approximate distance rho_A0_to_s (tA) by (11).
 dts = 0; % terms with dts are negligible, so I set it to zero
-XA0 = Xs; % 
-YA0 = Ys; % approximate receiver coordinates
-ZA0 = Zs; %
+XA0 = 3104219.4530; % 
+YA0 = 998383.9820; % approximate receiver coordinates
+ZA0 = 5463290.5080; %
 rho_A0_to_s = sqrt(...
     (Xs - XA0 + omega_e_dot*YA0*dts)^2 + ... % x^2
     (Ys - YA0 + omega_e_dot*XA0*dts)^2 + ... % y^2
     (Zs - ZA0)^2   ... % z^2
 );
-dtA = 0;
-rho_A_to_s = P1 + c*dtsL1_with_dtr - c*dtA; % (8) dtA =\= 0 
+% dtA = 0;
+% rho_A_to_s = P1 + c*dtsL1_with_dtr - c*dtA; % (8) dtA =\= 0 
 %% 12. Repeat steps 1 - 11 for all measured satellites.
 %% 13. Compute elements of vector L (19).
 %% 14. Compute elements of matrix A (20); a_x_to_s , a_y_to_s , a_z_to_s by (12)
