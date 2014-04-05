@@ -1,4 +1,4 @@
-function p1_numbers = importfile(filename, startRow, endRow)
+function p1_numbers = importObsP1numbers(filename, startRow, endRow)
 %IMPORTFILE Import numeric data from a text file as a matrix.
 %   P1_NUMBERS = IMPORTFILE(FILENAME) Reads data from text file
 %   FILENAME for the default selection.

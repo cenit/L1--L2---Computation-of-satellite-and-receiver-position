@@ -8,6 +8,7 @@ mu = 3.986005e14; % universal gravitational parameter (m/s)^3
 omega_e_dot = 7.2921151467e-5; % earth rotation rate (rad/s)
 F = -4.442807633e-10; % s/m^1/2
 %% Import navigation file
+% includes parameters
 navfiles = importNavigationFiles('0lov033b.04n');
 i = 1:8:112;
 sat = navfiles(i(5):i(5)+8,:);
@@ -23,8 +24,10 @@ sat = num2cell(sat);
     ~,          ~,          tgd,        ~]...
     =sat{:};
 %% Import P1 numbers and satellite numbers
+% observation file 
 p1_numbers = importObsP1numbers('0lov033b.04o', 1371, 1392);
 satelliteNumbers = importObsSatelliteNumbers('0lov033b.04o', 1370, 1370);
+[XA0,YA0,ZA0] = importApproxPosition('0lov033b.04o',8, 8);
 %% Compute signal propagation time by (13)
 P1 = p1_numbers(1);
 ta_nom = seconds_in_week(1,1,14,0); % 1 hour and 14 minutes
@@ -81,9 +84,6 @@ dtsL1_with_dtr = dtsL1 + dtr; % (24)
 %% 10. Compute ionospheric correction I_A_to_s (tA)
 %% 11. Compute approximate distance rho_A0_to_s (tA) by (11).
 dts = 0; % terms with dts are negligible, so I set it to zero
-XA0 = 3104219.4530; %
-YA0 = 998383.9820; % approximate receiver coordinates
-ZA0 = 5463290.5080; %
 rho_A0_to_s = sqrt(...
     (Xs - XA0 + omega_e_dot*YA0*dts)^2 + ... % x^2
     (Ys - YA0 + omega_e_dot*XA0*dts)^2 + ... % y^2
