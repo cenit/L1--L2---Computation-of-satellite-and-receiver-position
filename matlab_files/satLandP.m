@@ -1,27 +1,18 @@
-%% Computation of receiver's position
-addpath('/Users/kevin/SkyDrive/KTH Work/Period 4 2014/GNSS/Labs/L1, L2 - Computation of satellite and receiver position')
-cd('/Users/kevin/SkyDrive/KTH Work/Period 4 2014/GNSS/Labs/L1, L2 - Computation of satellite and receiver position')
-clear all;
-clc;
+function [ Lmatrix, Amatrix] = satLandP( satelliteNumberOrder,P1,navfiles,XA0,YA0,ZA0 )
+%UNTITLED7 Summary of this function goes here
+%   Detailed explanation goes here
+%% Constants
 c = 299792458; % speed of light (m/s)
 mu = 3.986005e14; % universal gravitational parameter (m/s)^3
 omega_e_dot = 7.2921151467e-5; % earth rotation rate (rad/s)
 F = -4.442807633e-10; % s/m^1/2
-%% Import P1 numbers and satellite numbers
-% observation file 
-p1_numbers = importObsP1numbers('0lov033b.04o', 1371, 1392); % Doesn't change
-satelliteNumbers = importObsSatelliteNumbers('0lov033b.04o', 1370, 1370); % Doesn't change
-[XA0,YA0,ZA0] = importApproxPosition('0lov033b.04o',8, 8); % Doesnt change
-%% Import navigation file
-% includes parameters
-navfiles = importNavigationFiles('0lov033b.04n');
-% Now it becomes satelite specific
+%%
 i = 1:8:112;
-sat = navfiles(i(5):i(5)+8,:);
+sat = navfiles(i(satelliteNumberOrder):i(satelliteNumberOrder)+8,:);
 sat = transpose(cell2mat(sat));
 sat = num2cell(sat);
 % Imports numbers to all variables ... changes per satellite
-[satnumber,     af0,        af1,        af2,...
+[satnumberReal,     af0,        af1,        af2,...
     iode,       crs,        dn,         m0,...
     cuc,        ec,         cus,        sqrtA,...
     toe,        cic,        omega0,     cis,...
@@ -30,7 +21,6 @@ sat = num2cell(sat);
     ~,          ~,          tgd,        ~]...
     =sat{:};
 %% Compute signal propagation time by (13)
-P1 = p1_numbers(1); % specific per time and satellite
 ta_nom = seconds_in_week(1,1,14,0); % 1 hour and 14 minutes My Time
 tAtoS = P1/c; % signal propagation time
 %% Compute signal transmission time by (14)
@@ -96,13 +86,7 @@ rho_A0_to_s = sqrt(...
 %% 13. Compute elements of vector L (19).
 Lmatrix = P1 - rho_A0_to_s + c*dtsL1_with_dtr;
 %% 14. Compute elements of matrix A (20); a_x_to_s , a_y_to_s , a_z_to_s by (12)
-Amatrix = 1/rho_A0_to_s*[(Xs - XA0),(Ys - YA0),(Zs - ZA0)];
-%% 15. Estimate unknown parameters by (18)
-%% 16. Update receiver coordinates by (22)
-%% 17. Repeat steps 11 -16 until the solution has converged.
-% The solution has converged if the following condition is
-% fulfilled: (vTv)i −(vTv)i−1 <ε, where ε is a small number
-% and depends on the numerical accuracy, ε = 1e-5 should
-% suffice to preserve mm numerical precision of the computed
-% coordinates; i is iteration number. The vector v is computed
-% after step 13 by Equation (17).
+Amatrix = 1/rho_A0_to_s*[(Xs - XA0),(Ys - YA0),(Zs - ZA0),rho_A0_to_s];
+
+end
+
