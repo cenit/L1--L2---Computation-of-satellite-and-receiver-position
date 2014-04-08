@@ -16,38 +16,19 @@ satelliteNumbers = importObsSatelliteNumbers('0lov033b.04o', 1370, 1370); % Does
 % includes parameters
 navfiles = importNavigationFiles('0lov033b.04n');
 % Now it becomes satelite specific
-for satelliteNumberOrder = 1:11
-    [ Lmat(satelliteNumberOrder,:), ...
-        Amat(satelliteNumberOrder,:),...
-        rho_A0_to_s(satelliteNumberOrder,:),...
-        Xs(satelliteNumberOrder,:),Ys(satelliteNumberOrder,:),...
-        Zs(satelliteNumberOrder,:),P1(satelliteNumberOrder,:),...
-        dtsL1_with_dtr(satelliteNumberOrder,:)]...
-        = satLandP( satelliteNumberOrder,p1_numbers(satelliteNumberOrder),navfiles,XA0,YA0,ZA0 );
-end
-for i = 1:11 % iterations for receiver coordinate estimates
-    %% 11. Compute approximate distance rho_A0_to_s (tA) by (11).
-    dts = 0; % terms with dts are negligible, so I set it to zero
-    rho_A0_to_s = sqrt(...
-        (Xs - XA0 + omega_e_dot*YA0*dts).^2 + ... % x^2
-        (Ys - YA0 + omega_e_dot*XA0*dts).^2 + ... % y^2
-        (Zs - ZA0).^2   ... % z^2
-        );
-    %% 12. Repeat steps 1 - 11 for all measured satellites.
-    %% 13. Compute elements of vector L (19).
-    Lmatrix = P1 - rho_A0_to_s + c*dtsL1_with_dtr;
-    %% 14. Compute elements of matrix A (20); a_x_to_s , a_y_to_s , a_z_to_s by (12)
-    Amatrix = 1/rho_A0_to_s*[(Xs - XA0),(Ys - YA0),(Zs - ZA0),rho_A0_to_s];
-    
-    %% 15. Estimate unknown parameters by (18)
+for i = 1:2 % iterations for receiver coordinate estimates
+    for satelliteNumberOrder = 1:length(satelliteNumbers)
+        [ Lmat(satelliteNumberOrder,:), Amat(satelliteNumberOrder,:)] = satLandP( satelliteNumberOrder,p1_numbers(satelliteNumberOrder),navfiles,XA0,YA0,ZA0 );
+    end
     unknownParameterX(:,i) = (Amat'*Amat)\(Amat'*Lmat);
-    %% 16. Update receiver coordinates by (22)
-    newXaYaZa = [XA0,YA0,ZA0]' + unknownParameterX(1:3,i);
+    newXaYaZa = [XA0;YA0;ZA0]+unknownParameterX(1:3,i);
     newXYZcell = num2cell(newXaYaZa);
     [XA0,YA0,ZA0] = newXYZcell{:};
-    v(:,i) = -Amat*unknownParameterX(:,i) + Lmat;
-    
+    v(:,i) = - Amat*unknownParameterX(:,i) + Lmat;
 end
+%% 15. Estimate unknown parameters by (18)
+% unknownParameterX1 = (Amat'*Amat)\(Amat'*Lmat);
+%% 16. Update receiver coordinates by (22)
 %% 17. Repeat steps 11 -16 until the solution has converged.
 % The solution has converged if the following condition is
 % fulfilled: (vTv)i −(vTv)i−1 <ε, where ε is a small number
