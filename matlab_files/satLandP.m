@@ -1,4 +1,4 @@
-function [ Lmatrix, Amatrix] = satLandP( satelliteNumberOrder,P1,navfiles,XA0,YA0,ZA0 )
+function [ rho_A0_to_s,Xs,Ys,Zs,dtsL1_with_dtr] = satLandP( satelliteNumberOrder,P1,navfiles,XA0,YA0,ZA0 )
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
 %% Constants
@@ -80,13 +80,7 @@ rho_A0_to_s = sqrt(...
     (Ys - YA0 + omega_e_dot*XA0*dts)^2 + ... % y^2
     (Zs - ZA0)^2   ... % z^2
     );
-% dtA = 0;
-% rho_A_to_s = P1 + c*dtsL1_with_dtr - c*dtA; % (8) dtA =\= 0
 %% 12. Repeat steps 1 - 11 for all measured satellites.
-%% 13. Compute elements of vector L (19).
-Lmatrix = P1 - rho_A0_to_s + c*dtsL1_with_dtr;
-%% 14. Compute elements of matrix A (20); a_x_to_s , a_y_to_s , a_z_to_s by (12)
-Amatrix = 1/rho_A0_to_s*[(Xs - XA0),(Ys - YA0),(Zs - ZA0),rho_A0_to_s];
 
 end
 
