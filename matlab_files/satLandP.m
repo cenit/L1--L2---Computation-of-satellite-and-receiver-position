@@ -1,4 +1,4 @@
-function [ Lmatrix, Amatrix] = satLandP( satelliteNumberOrder,P1,navfiles,XA0,YA0,ZA0 )
+function [ Lmatrix, Amatrix,rho_A0_to_s,Xs,Ys,Zs,P1,dtsL1_with_dtr] = satLandP( satelliteNumberOrder,P1,navfiles,XA0,YA0,ZA0 )
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
 %% Constants
