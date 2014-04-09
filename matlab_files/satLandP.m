@@ -1,4 +1,4 @@
-function [ Lmatrix, Amatrix,rho_A0_to_s,Xs,Ys,Zs,P1,dtsL1_with_dtr] = satLandP( satelliteNumberOrder,P1,navfiles,XA0,YA0,ZA0 )
+function [ Lmatrix, Amatrix,rho,Xs,Ys,Zs,P1,dtsL1_with_dtr] = satLandP( satelliteNumberOrder,P1,navfiles,XA0,YA0,ZA0 )
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
 %% Constants
@@ -12,7 +12,7 @@ sat = navfiles(i(satelliteNumberOrder):i(satelliteNumberOrder)+8,:);
 sat = transpose(cell2mat(sat));
 sat = num2cell(sat);
 % Imports numbers to all variables ... changes per satellite
-[~,     af0,        af1,        af2,...
+[satNumber,     af0,        af1,        af2,...
     ~,       crs,        dn,         m0,...
     cuc,        ec,         cus,        sqrtA,...
     toe,        cic,        omega0,     cis,...
@@ -21,13 +21,13 @@ sat = num2cell(sat);
     ~,          ~,          tgd,        ~]...
     =sat{:};
 %% Compute signal propagation time by (13)
-ta_nom = seconds_in_week(1,1,14,0); % 1 hour and 14 minutes My Time
+ta_nom = seconds_in_week(2,1,14,0); % 1 hour and 14 minutes My Time
 tAtoS = P1/c; % signal propagation time
 %% Compute signal transmission time by (14)
 ts_nom = ta_nom - tAtoS;
 %% Compute satellite clock correction dtsL1
 % by (24) and (25), neglect dtr
-t_oc = seconds_in_week(1,2,0,0); %
+t_oc = seconds_in_week(2,2,0,0); %
 tsv = af0 + af1*(ts_nom-t_oc)+af2*(ts_nom-t_oc)^2; % (25)
 dtsL1 = tsv - tgd; % (24)
 %% Compute ts using the correction from the step 3.
@@ -74,19 +74,18 @@ dtsL1_with_dtr = dtsL1 + dtr; % (24)
 %% 9. Compute tropospheric correction T_A_to_s (tA)
 %% 10. Compute ionospheric correction I_A_to_s (tA)
 %% 11. Compute approximate distance rho_A0_to_s (tA) by (11).
-dts = 0; % terms with dts are negligible, so I set it to zero
-rho_A0_to_s = sqrt(...
-    (Xs - XA0 + omega_e_dot*YA0*dts)^2 + ... % x^2
-    (Ys - YA0 + omega_e_dot*XA0*dts)^2 + ... % y^2
+rho = sqrt(...
+    (Xs - XA0)^2 + ... % x^2
+    (Ys - YA0)^2 + ... % y^2
     (Zs - ZA0)^2   ... % z^2
     );
 % dtA = 0;
 % rho_A_to_s = P1 + c*dtsL1_with_dtr - c*dtA; % (8) dtA =\= 0
 %% 12. Repeat steps 1 - 11 for all measured satellites.
 %% 13. Compute elements of vector L (19).
-Lmatrix = P1 - rho_A0_to_s + c*dtsL1_with_dtr;
+Lmatrix = P1 - rho + c*dtsL1_with_dtr;
 %% 14. Compute elements of matrix A (20); a_x_to_s , a_y_to_s , a_z_to_s by (12)
-Amatrix = 1/rho_A0_to_s*[(Xs - XA0),(Ys - YA0),(Zs - ZA0),rho_A0_to_s];
+Amatrix = 1/rho*[(Xs - XA0),(Ys - YA0),(Zs - ZA0),rho];
 
 end
 
