@@ -23,6 +23,7 @@ sortedSatelliteNumbers = sortrows([satelliteNumbers',p1_numbers],1);
 
 %% Now it becomes satelite specific
 for satI = 1:7
+    %% Steps 1-11 done inside
     [ Lmat(satI,:), ...
         Amat(satI,:),...
         rho(satI,:),...
@@ -43,10 +44,10 @@ end
 % after step 13 by Equation (17).
 for i = 1:10
     changeX = (Amat'*Amat)\(Amat'*Lmat);
+    v(:,i) = -Amat*changeX + Lmat;
     newXYZ = [XA0,YA0,ZA0] + changeX(1:3)';
     newxyzcell = num2cell(newXYZ);
     [XA0,YA0,ZA0] = newxyzcell{:};
-    [histXA0(i,:),histYA0(i,:),histZA0(i,:)] = newxyzcell{:};
     v(:,i) = -Amat*changeX + Lmat;
     rho = sqrt(...
         (Xs - XA0 + omega_e_dot * YA0 * tAtoS).^2 + ... % x^2
@@ -62,7 +63,7 @@ for i = 1:10
     if i>1
         condition = abs(v(:,end)'*v(:,end)-v(:,end-1)'*v(:,end-1));
         if condition < 1e-4
-            sprintf('convergence condition met = %d',condition)
+            fprintf('Convergence condition met = %d\n',condition)
             fprintf('X = %7.3f\n',XA0)
             fprintf('Y = %7.3f\n',YA0)
             fprintf('Z = %7.3f\n',ZA0)
@@ -70,15 +71,3 @@ for i = 1:10
         end
     end
 end
-condition = abs(v(:,end)'*v(:,end)-v(:,end-1)'*v(:,end-1));
-fprintf('value of X is %7.3f\n',XA0)
-fprintf('value of Y is %7.3f\n',YA0)
-fprintf('value of Z is %7.3f\n',ZA0)
-fprintf('change of X is %3f\n',XA0-approxPos(1))
-fprintf('change of Y is %3f\n',YA0-approxPos(2))
-fprintf('change of Z is %3f\n',ZA0-approxPos(3))
-fprintf('condition is %0.3d',condition)
-% for i = 1:length(histXA0)
-%     fprintf('hist of X is %3f, %3f, %3f \n',...
-%         [histXA0(i,:),histYA0(i,:),histZA0(i,:)])
-% end
