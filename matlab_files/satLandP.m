@@ -1,4 +1,4 @@
-function [ Lmatrix, Amatrix,rho,Xs,Ys,Zs,P1,dtsL1_with_dtr] = satLandP( satelliteNumberOrder,P1,navfiles,XA0,YA0,ZA0 )
+function [ Lmatrix, Amatrix,rho,Xs,Ys,Zs,P1,dtsL1_dtr,change_tsv,ts,tAtoS] = satLandP( satelliteNumberOrder,P1,navfiles,XA0,YA0,ZA0 )
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
 %% Constants
@@ -13,38 +13,40 @@ sat = transpose(cell2mat(sat));
 sat = num2cell(sat);
 % Imports numbers to all variables ... changes per satellite
 [satNumber,     af0,        af1,        af2,...
-    ~,       crs,        dn,         m0,...
+    ~,       crs,        change_n,         m0,...
     cuc,        ec,         cus,        sqrtA,...
     toe,        cic,        omega0,     cis,...
     i0,         crc,        w,          omegadot,...
-    idot,       ~,          ~,          ~,...
-    ~,          ~,          tgd,        ~]...
+    idot,       ~,          weekNum,          ~,...
+    ~,          ~,          tgd,        ~,...
+    transmitTime]...
     =sat{:};
-%% Compute signal propagation time by (13)
-ta_nom = seconds_in_week(2,1,14,0); % 1 hour and 14 minutes My Time
+%% 1. Compute signal propagation time by (13)
+tA_nom = seconds_in_week(2,1,14,0); % 2 days, 1 hour, 14 minutes My Time
 tAtoS = P1/c; % signal propagation time
-%% Compute signal transmission time by (14)
-ts_nom = ta_nom - tAtoS;
-%% Compute satellite clock correction dtsL1
+%% 2. Compute signal transmission time by (14)
+tS_nom = tA_nom - P1/c;
+%% 3. Compute satellite clock correction dtsL1
 % by (24) and (25), neglect dtr
-t_oc = seconds_in_week(2,2,0,0); %
-tsv = af0 + af1*(ts_nom-t_oc)+af2*(ts_nom-t_oc)^2; % (25)
-dtsL1 = tsv - tgd; % (24)
-%% Compute ts using the correction from the step 3.
-ts = ts_nom - dtsL1;
-%% Compute eccentric anomaly (Table 2)
+t_oc = toe; % I believe this is true, but not sure
+change_tsv = af0 + af1*(tS_nom-t_oc)+af2*(tS_nom-t_oc)^2; % (25)
+dtsL1 = change_tsv - tgd; % (24)
+%% 4. Compute ts using the correction from the step 3.
+ts = tS_nom - dtsL1;
+%% 5. Compute eccentric anomaly (Table 2)
 % ek = mk + ec*sin(ek)
 A = sqrtA^2;
 n0 = sqrt(mu/A^3); % Computed mean motion
-n = n0 + dn;
+n = n0 + change_n;
 tk = ts - toe;
 tk = fixTk(tk); % if,then for table 2 of tk
 mk = m0 + n*tk;
 Ek = keplersEquation(mk,ec);
-%% Compute dtr by (26) and ts by (15).
-dtr = F*ec*sqrtA*sin(Ek); %(26)
-ts_with_dtr = ts - dtr;
-%% Compute satellite coordinates Xs, Ys, Zs, for time ts - Table 2
+%% 6. Compute dtr by (26) and ts by (15).
+change_tr = F*ec*sqrtA*sin(Ek); %(26)
+ts_with_dtr = ts - change_tr;
+%% 7. Compute satellite coordinates Xs, Ys, Zs, for time ts
+% - Table 2
 % Calculate rk
 vk = atan2((sqrt(1-ec^2)*sin(Ek)/(1-ec*cos(Ek))),...
     ((cos(Ek)-ec)/(1-ec*cos(Ek))));
@@ -70,22 +72,44 @@ Xs = xk;
 Ys = yk;
 Zs = zk;
 %% Compute satellite clock correction dtsL1 by (24) - (27)
-dtsL1_with_dtr = dtsL1 + dtr; % (24)
+dtsL1_dtr = change_tsv + change_tr - tgd; % (24)
 %% 9. Compute tropospheric correction T_A_to_s (tA)
 %% 10. Compute ionospheric correction I_A_to_s (tA)
 %% 11. Compute approximate distance rho_A0_to_s (tA) by (11).
 rho = sqrt(...
-    (Xs - XA0)^2 + ... % x^2
-    (Ys - YA0)^2 + ... % y^2
+    (Xs - XA0 + omega_e_dot * YA0 * tAtoS)^2 + ... % x^2
+    (Ys - YA0 - omega_e_dot * XA0 * tAtoS)^2 + ... % y^2
     (Zs - ZA0)^2   ... % z^2
     );
 % dtA = 0;
 % rho_A_to_s = P1 + c*dtsL1_with_dtr - c*dtA; % (8) dtA =\= 0
 %% 12. Repeat steps 1 - 11 for all measured satellites.
 %% 13. Compute elements of vector L (19).
-Lmatrix = P1 - rho + c*dtsL1_with_dtr;
+Lmatrix = P1 - rho + c*dtsL1_dtr;
 %% 14. Compute elements of matrix A (20); a_x_to_s , a_y_to_s , a_z_to_s by (12)
-Amatrix = 1/rho*[(Xs - XA0),(Ys - YA0),(Zs - ZA0),rho];
-
+Amatrix = 1/rho*[-(Xs - XA0),-(Ys - YA0),-(Zs - ZA0),rho];
+%% Print out parameters for each satellite
+% fprintf('Epoch: 2004 2 2 1 14 0.0 \nSatellite %d, Pseudorange: %3f\n',satNumber,P1)
+% fprintf([...
+% 'no = %0.11f\n'...
+% 'n = %0.11f \n'...
+% 'E = %0.7f \n'... 
+% 'tk = %0.7f \n'...
+% 'M0 = %0.7f \n'...
+% 'Mk = %0.7f \n'...
+% 'nik = %0.7f \n'...
+% 'Fik = %0.7f \n'...
+% 'duk = %0.7f \n'...
+% 'drk = %0.7f \n'...
+% 'dik = %0.10f \n'...
+% 'uk = %0.7f \n'...
+% 'rk = %0.7f \n'...
+% 'ik = %0.7f \n'...
+% 'Omk = %0.7f \n'...
+% 'Xxk = %0.7f \n'...
+% 'Yyk = %0.7f \n'...
+% 'X = %3f Y = %3f Z = %3f'],...
+%     n0,n,Ek,tk,m0,mk,vk,Phik,duk,drk,dik,uk,...
+%     rk,ik,omegak,xkp,ykp,Xs,Ys,Zs)
 end
 
