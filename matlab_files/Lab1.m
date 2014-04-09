@@ -1,5 +1,6 @@
 %% Computation of receiver's position
 addpath('/Users/kevin/SkyDrive/KTH Work/Period 4 2014/GNSS/Labs/L1, L2 - Computation of satellite and receiver position')
+addpath('/Users/kevin/SkyDrive/KTH Work/Period 4 2014/GNSS/Labs/L1, L2 - Computation of satellite and receiver position/matlab_files/')
 cd('/Users/kevin/SkyDrive/KTH Work/Period 4 2014/GNSS/Labs/L1, L2 - Computation of satellite and receiver position')
 clear all;
 clc;
@@ -25,9 +26,16 @@ for satelliteNumberOrder = 1:11
         dtsL1_with_dtr(satelliteNumberOrder,:)]...
         = satLandP( satelliteNumberOrder,p1_numbers(satelliteNumberOrder),navfiles,XA0,YA0,ZA0 );
 end
-for i = 1:11 % iterations for receiver coordinate estimates
-    %% 11. Compute approximate distance rho_A0_to_s (tA) by (11).
-    dts = 0; % terms with dts are negligible, so I set it to zero
+%% 
+clc
+AmatrixOutside = [(Xs-XA0)./rho_A0_to_s,...
+    Ys-YA0./rho_A0_to_s,...
+    Zs-ZA0./rho_A0_to_s,...
+    rho_A0_to_s./rho_A0_to_s];
+LmatrixOutside = P1 - rho_A0_to_s + c*dtsL1_with_dtr;
+changeX = (AmatrixOutside'*AmatrixOutside)\(AmatrixOutside'*LmatrixOutside);
+newXYZ = [XA0,YA0,ZA0] + changeX(1:3)';
+%%
     rho_A0_to_s = sqrt(...
         (Xs - XA0 + omega_e_dot*YA0*dts).^2 + ... % x^2
         (Ys - YA0 + omega_e_dot*XA0*dts).^2 + ... % y^2
