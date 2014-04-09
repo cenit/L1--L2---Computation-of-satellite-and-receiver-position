@@ -20,10 +20,9 @@ navfiles = importNavigationFiles('0lov033b.04n');
 %% Match up satellite number with row in data
 satNumMatch = navfiles(1:8:96,1); % Order of satellite numbers import
 sortedSatelliteNumbers = sortrows([satelliteNumbers',p1_numbers],1);
-
 %% Now it becomes satelite specific
 count = 1;
-for i = 1:12
+for i = 1:length(satNumMatch)
     %% Steps 1-11 done inside
     if cell2mat(satNumMatch(i))==sortedSatelliteNumbers(count,1)
     [ Lmat(count,:), ...
@@ -38,7 +37,7 @@ for i = 1:12
         = satLandP( i,sortedSatelliteNumbers(count,2),navfiles,XA0,YA0,ZA0);
         count = count + 1;
     else
-        fprintf('No Satellite data for #%3d',cell2mat(satNumMatch(i)))
+        fprintf('No data for Satellite%3d\n',cell2mat(satNumMatch(i)))
     end
 end
 
