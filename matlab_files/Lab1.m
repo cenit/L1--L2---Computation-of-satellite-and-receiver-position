@@ -10,11 +10,9 @@ omega_e_dot = 7.2921151467e-5; % earth rotation rate (rad/s)
 F = -4.442807633e-10; % s/m^1/2
 %% Import P1 numbers and satellite numbers
 % observation file
-p1_numbers = importObsP1numbers('0lov033b.04o', 995,1018); % Doesn't change
-satelliteNumbers = [24,13,8,21,29,26,10,17,2,28,3,27] % Doesn't change
-% [XA0,YA0,ZA0] = importApproxPosition('0lov033b.04o',8, 8); % Doesnt change
-lov033b = importObserverFileAsString('0lov033b.04o', 1, 5629);
-[XA0,YA0,ZA0] = samplefunction(lov033b);
+p1_numbers = importObsP1numbers('0lov033b.04o', 1371, 1392); % Doesn't change
+satelliteNumbers = importObsSatelliteNumbers('0lov033b.04o', 1370, 1370); % Doesn't change
+[XA0,YA0,ZA0] = importApproxPosition('0lov033b.04o',8, 8); % Doesnt change
 approxPos = [XA0,YA0,ZA0];
 %% Import navigation file
 % includes parameters
