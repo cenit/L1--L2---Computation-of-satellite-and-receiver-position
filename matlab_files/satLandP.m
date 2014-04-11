@@ -1,4 +1,4 @@
-function [ Lmatrix, Amatrix,rho_f,Xs_f,Ys_f,Zs_f,P1_f,dtsL1_dtr_f,change_tsv_f,ts_f,tAtoS_f] = satLandP( satelliteNumberOrder,P1_f,navfiles,XA0,YA0,ZA0)
+function [ Lmatrix, Amatrix,rho_f,Xs_f,Ys_f,Zs_f,P1_f,dtsL1_dtr_f,change_tsv_f,ts_f,tAtoS_f] = satLandP( satelliteNumberOrder,P1_f,navfiles,XA0,YA0,ZA0,ndaysf,nhoursf,nminutesf,nsecondsf)
 %UNTITLED7 Summary of this function goes here
 %   Detailed explanation goes here
 %% Constants
@@ -22,7 +22,7 @@ sat = num2cell(sat);
     ~]...
     =sat{:};
     %% 1. Compute signal propagation time by (13)
-    tA_nom = seconds_in_week(2,1,14,0); % 2 days, 1 hour, 14 minutes My Time
+    tA_nom = seconds_in_week(ndaysf,nhoursf,nminutesf,nsecondsf); % 2 days, 1 hour, 14 minutes My Time
     tAtoS_f = P1_f/c; % signal propagation time
     %% 2. Compute signal transmission time by (14)
     tS_nom = tA_nom - P1_f/c;
