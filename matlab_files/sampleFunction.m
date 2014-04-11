@@ -10,4 +10,3 @@ yvalue = str2double(lov033b{Index-2*length(lov033b)});
 zvalue = str2double(lov033b{Index-3*length(lov033b)});
 
 end
-

@@ -75,18 +75,19 @@ for i = 1:10
         condition = abs(v(:,end)'*v(:,end)-v(:,end-1)'*v(:,end-1));
         if condition < 1e-4
             fprintf('Convergence condition met = %d\n',condition);
+            %% Lab 2
+            % Find sigma and Q
+            Q = inv((Amat'*Amat));
+            sigma_0 = sqrt(v(:,end)'*v(:,end)/(length(Amat)-length(Q)));
+            sigma_x = sigma_0*sqrt(Q(1,1));
+            sigma_y = sigma_0*sqrt(Q(2,2));
+            sigma_z = sigma_0*sqrt(Q(3,3));
+            sigma_t = sigma_0*sqrt(Q(4,4))/c;
+            fprintf('X = %7.3f, mX = %7.3f\n',XA0,sigma_x)
+            fprintf('Y = %7.3f, mX = %7.3f\n',YA0,sigma_y)
+            fprintf('Z = %7.3f, mX = %7.3f\n',ZA0,sigma_z)
+            fprintf('T = %0.10f, mt = %0.10d\n',-changeX(4)'/c,sigma_t)
             return
         end
     end
-    %% Lab 2
-    % Find sigma and Q
-    Q = inv((Amat'*Amat));
-    sigma_0 = sqrt(v(:,end)'*v(:,end)/(length(Amat)-length(Q)));
-    sigma_x = sigma_0*sqrt(Q(1,1))
-    sigma_y = sigma_0*sqrt(Q(2,2))
-    sigma_z = sigma_0*sqrt(Q(3,3))
-    fprintf('X = %7.3f, mX = %7.3f\n',XA0,sigma_x)
-    fprintf('Y = %7.3f, mX = %7.3f\n',YA0,sigma_y)
-    fprintf('Z = %7.3f, mX = %7.3f\n',ZA0,sigma_z)
-    
 end

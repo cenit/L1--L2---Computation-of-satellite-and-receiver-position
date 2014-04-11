@@ -1,7 +1,10 @@
+clear all
 lov033b = importObserverFileAsString('0lov033b.04o', 1, 5629);
-IndexC = strfind(lov033b, 'APPROX');
+IndexC = strfind(lov033b, 'END');
 Index = find(not(cellfun('isempty', IndexC)));
+lov033b{Index+1,2}
 %%
-xvalue = str2double(lov033b{Index-length(lov033b)});
-yvalue = str2double(lov033b{Index-2*length(lov033b)});
-zvalue = str2double(lov033b{Index-3*length(lov033b)});
+xyc1 = sscanf(lov033b{Index+1,8}, '%f',[1 Inf])
+mine=[2,1,14,0];
+sam = str2double(lov033b{Index+1,2});
+[str2double(lov033b{Index+1,6})]
