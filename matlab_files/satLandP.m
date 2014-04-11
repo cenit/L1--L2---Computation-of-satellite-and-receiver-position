@@ -22,7 +22,7 @@ sat = num2cell(sat);
     ~]...
     =sat{:};
     %% 1. Compute signal propagation time by (13)
-    tA_nom = seconds_in_week(2,1,14,0); % 2 days, 1 hour, 14 minutes My Time
+    tA_nom = seconds_in_week(2,1,10,0); % 2 days, 1 hour, 14 minutes My Time
     tAtoS_f = P1_f/c; % signal propagation time
     %% 2. Compute signal transmission time by (14)
     tS_nom = tA_nom - P1_f/c;

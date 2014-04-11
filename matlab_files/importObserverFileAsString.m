@@ -7,7 +7,7 @@ function lov033b = importObserverFileAsString(filename, startRow, endRow)
 %   from rows STARTROW through ENDROW of text file FILENAME.
 %
 % Example:
-%   lov033b = importfile('0lov033b.04o', 1, 5629);
+%   lov033b = importObserverFileAsString('0lov033b.04o', 1, 5629);
 %
 %    See also TEXTSCAN.
 
