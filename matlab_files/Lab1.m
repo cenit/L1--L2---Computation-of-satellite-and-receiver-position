@@ -8,15 +8,16 @@ c = 299792458; % speed of light (m/s)
 mu = 3.986005e14; % universal gravitational parameter (m/s)^3
 omega_e_dot = 7.2921151467e-5; % earth rotation rate (rad/s)
 F = -4.442807633e-10; % s/m^1/2
-time = [2,1,14,0]; % days, hours, minutes, seconds
+time = [2,1,1,0]; % days, hours, minutes, seconds
 junk = num2cell(time);
 [nday,nhours,nminutes,nseconds] = junk{:};
 clear junk;
 lov033b = importObserverFileAsString('0lov033b.04o', 1, 5629);
 %% Import P1 numbers and satellite numbers
 % observation file
-p1_numbers = importObsP1numbers('0lov033b.04o', 1371, 1392); % Doesn't change
-satelliteNumbers = importObsSatelliteNumbers('0lov033b.04o', 1370, 1370); % Doesn't change
+[rowInObs,nOfRows] = findTimeInObsFunction( lov033b,time );
+p1_numbers = importObsP1numbers('0lov033b.04o', rowInObs+1,rowInObs+nOfRows*2); % Doesn't change
+satelliteNumbers = importObsSatelliteNumbers('0lov033b.04o', rowInObs,rowInObs); % Doesn't change
 [XA0,YA0,ZA0] = sampleFunction(lov033b);
 approxPos = [XA0,YA0,ZA0];
 %% Import navigation file, same for every time

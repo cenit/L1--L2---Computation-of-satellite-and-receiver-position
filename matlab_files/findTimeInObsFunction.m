@@ -1,14 +1,14 @@
-clear all
-lov033b = importObserverFileAsString('0lov033b.04o', 1, 5629);
+function [ n,satamount ] = findTimeInObsFunction( lovFile,mine )
+%UNTITLED9 Summary of this function goes here
+%   Detailed explanation goes here
+lov033b = lovFile;
 IndexC = strfind(lov033b, 'END');
 Index = find(not(cellfun('isempty', IndexC)));
 n = Index + 1;
-lov033b{n,2}
-mine=[2,1,14,0];
 %%
-satamount = sscanf(lov033b{n,8}, '%f',[1 Inf])
+satamount = sscanf(lov033b{n,8}, '%f',[1 Inf]);
 sam = str2double(lov033b{n,2});
-samp=[str2double(lov033b{n,3}),str2double(lov033b{n,4}),str2double(lov033b{n,5}),str2double(lov033b{n,6})]
+samp=[str2double(lov033b{n,3}),str2double(lov033b{n,4}),str2double(lov033b{n,5}),str2double(lov033b{n,6})];
 myTiming = isequal(mine,samp);
 %%
 for i = 1:100
@@ -18,8 +18,9 @@ for i = 1:100
     samp=[str2double(lov033b(n,3)),str2double(lov033b{n,4}),str2double(lov033b{n,5}),str2double(lov033b{n,6})];
     myTiming = isequal(mine,samp);
     if myTiming
-        disp('yay');
-        disp(sprintf('%g satellites,(%g days,%g hour,%g minutes,%g seconds)',satamount,samp(1),samp(2),samp(3),samp(4)));
         return
     end
 end
+[strsplit(lov033b{n,8},'G'),strsplit(lov033b{20,9},'G'),strsplit(lov033b{20,10},'G'),strsplit(lov033b{20,10},'G')]
+end
+

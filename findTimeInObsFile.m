@@ -1,4 +1,4 @@
-clear all
+
 lov033b = importObserverFileAsString('0lov033b.04o', 1, 5629);
 IndexC = strfind(lov033b, 'END');
 Index = find(not(cellfun('isempty', IndexC)));

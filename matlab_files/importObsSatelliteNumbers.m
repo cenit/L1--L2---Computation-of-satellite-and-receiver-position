@@ -16,10 +16,10 @@ function satelliteNumbers = importObsSatelliteNumbers(filename, startRow, endRow
 
 %% Initialize variables.
 delimiter = 'G';
-if nargin<=2
-    startRow = 1370;
-    endRow = 1370;
-end
+% if nargin<=2
+%     startRow = 1370;
+%     endRow = 1370;
+% end
 
 %% Format string for each line of text:
 %   column2: double (%f)
