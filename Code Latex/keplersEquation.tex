@@ -1,0 +1,31 @@
+
+% This LaTeX was auto-generated from an M-file by MATLAB.
+% To make changes, update the M-file and republish this document.
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{color}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+    
+    \begin{verbatim}
+function Ek = keplersEquation( mk,ec )
+E0(1) = mk;
+n=7;
+for i = 1:n
+    E0(i+1) = mk + ec*sin(E0(i));
+    eps = abs(E0(i)-E0(i+1));
+end
+Ek = E0(end);
+end
+\end{verbatim}
+
+
+
+\end{document}
+    

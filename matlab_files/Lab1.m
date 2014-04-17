@@ -1,10 +1,13 @@
 %% Computation of receiver's position
 clear all;
+addpath('/Users/kevin/SkyDrive/KTH Work/Period 4 2014/GNSS/Labs/L1, L2 - Computation of satellite and receiver position')
+addpath('/Users/kevin/SkyDrive/KTH Work/Period 4 2014/GNSS/Labs/L1, L2 - Computation of satellite and receiver position/matlab_files/')
+cd('/Users/kevin/SkyDrive/KTH Work/Period 4 2014/GNSS/Labs/L1, L2 - Computation of satellite and receiver position')
 c = 299792458; % speed of light (m/s)
 mu = 3.986005e14; % universal gravitational parameter (m/s)^3
 omega_e_dot = 7.2921151467e-5; % earth rotation rate (rad/s)
 F = -4.442807633e-10; % s/m^1/2
-time = [2,1,14,0]; % days, hours, minutes, seconds
+time = [2,1,10,0]; % days, hours, minutes, seconds
 junk = num2cell(time);
 [nday,nhours,nminutes,nseconds] = junk{:};
 clear junk;
@@ -13,20 +16,34 @@ lov033b = importObserverFileAsString('0lov033b.04o', 1, 5629);
 % Import P1 numbers and satellite numbers
 [rowInObs,nOfRows] = findTimeInObsFunction( lov033b,time ); % match your time with observer time
 p1_numbers = importObsP1numbers('0lov033b.04o', rowInObs+1,rowInObs+nOfRows*2); % Import P1 numbers from the matched time above
-satelliteNumbers = importObsSatelliteNumbers('0lov033b.04o', rowInObs,rowInObs); % Import satellite numbers from matched time
+satelliteNumbers = [24,13,8,21,29,26,10,17,2,28,3,27];
 [XA0,YA0,ZA0] = sampleFunction(lov033b); % Record Approximate Position
+approxPos = [XA0,YA0,ZA0];
+
 %% Import navigation file
 navfiles = importNavigationFiles('0lov033b.04n');
 %% Match satellite numbers with available satellites
 satNumMatch = navfiles(1:8:96,1); % Order of satellite numbers import
+%%
 sortedSatelliteNumbers = sortrows([satelliteNumbers',p1_numbers],1);
 %% Main loop steps 1-14
 % Calculates variables needed for correction iterations
 count = 1;
+Lmat = ones(length(satNumMatch),1);
+Amat = ones(length(satNumMatch),4);
+Xs = ones(length(satNumMatch),1);
+Ys = ones(length(satNumMatch),1);
+Zs = ones(length(satNumMatch),1);
+rho = ones(length(satNumMatch),1);
+P1 = ones(length(satNumMatch),1);
+dtsL1_with_dtr = ones(length(satNumMatch),1);
+tAtoS = ones(length(satNumMatch),1);
+v = ones(length(satNumMatch),2);
+
 for i = 1:length(satNumMatch)
     %% Steps 1-14 done inside
     if cell2mat(satNumMatch(i))==sortedSatelliteNumbers(count,1)
-        [ Lmat(count,:), ...
+        [ Lmat(count,1), ...
             Amat(count,:),...
             rho(count,:),...
             Xs(count,:),Ys(count,:),Zs(count,:),...
@@ -76,6 +93,9 @@ for i = 1:10
             fprintf('Y = %7.3f, mX = %7.3f\n',YA0,sigma_y);
             fprintf('Z = %7.3f, mX = %7.3f\n',ZA0,sigma_z);
             fprintf('T = %0.10f, mt = %0.10d\n',-changeX(4)'/c,sigma_t);
+            fprintf('XA0 = %7.3f\n',approxPos(1));
+            fprintf('YA0 = %7.3f\n',approxPos(2));
+            fprintf('ZA0 = %7.3f\n',approxPos(3));
             return
         end
     end

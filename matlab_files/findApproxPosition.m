@@ -1,4 +1,4 @@
-function [ xvalue,yvalue,zvalue ] = sampleFunction( lov033b )
+function [ xvalue,yvalue,zvalue ] = findApproxPosition( lov033b )
 %UNTITLED8 Summary of this function goes here
 %   Detailed explanation goes here
 

@@ -1,6 +1,4 @@
 function Ek = keplersEquation( mk,ec )
-%UNTITLED4 Summary of this function goes here
-%   Detailed explanation goes here
 E0(1) = mk;
 n=7;
 for i = 1:n

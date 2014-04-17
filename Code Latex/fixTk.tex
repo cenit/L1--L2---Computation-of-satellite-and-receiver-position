@@ -1,0 +1,32 @@
+
+% This LaTeX was auto-generated from an M-file by MATLAB.
+% To make changes, update the M-file and republish this document.
+
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{color}
+
+\sloppy
+\definecolor{lightgray}{gray}{0.5}
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+    
+    \begin{verbatim}
+function tk = fixTk( tk )
+%UNTITLED5 Summary of this function goes here
+%   Detailed explanation goes here
+if tk > 302400
+    tk = tk - 604800;
+elseif tk < -302400
+    tk = tk + 604800;
+else
+    tk = tk;
+end
+\end{verbatim}
+
+
+
+\end{document}
+    
