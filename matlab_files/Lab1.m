@@ -7,7 +7,7 @@ c = 299792458; % speed of light (m/s)
 mu = 3.986005e14; % universal gravitational parameter (m/s)^3
 omega_e_dot = 7.2921151467e-5; % earth rotation rate (rad/s)
 F = -4.442807633e-10; % s/m^1/2
-time = [2,1,10,0]; % days, hours, minutes, seconds
+time = [2,1,14,0]; % days, hours, minutes, seconds
 junk = num2cell(time);
 [nday,nhours,nminutes,nseconds] = junk{:};
 clear junk;
@@ -16,7 +16,7 @@ lov033b = importObserverFileAsString('0lov033b.04o', 1, 5629);
 % Import P1 numbers and satellite numbers
 [rowInObs,nOfRows] = findTimeInObsFunction( lov033b,time ); % match your time with observer time
 p1_numbers = importObsP1numbers('0lov033b.04o', rowInObs+1,rowInObs+nOfRows*2); % Import P1 numbers from the matched time above
-satelliteNumbers = [24,13,8,21,29,26,10,17,2,28,3,27];
+satelliteNumbers = importObsSatelliteNumbers('0lov033b.04o', rowInObs,rowInObs); % Doesn't change
 [XA0,YA0,ZA0] = sampleFunction(lov033b); % Record Approximate Position
 approxPos = [XA0,YA0,ZA0];
 
@@ -29,27 +29,27 @@ sortedSatelliteNumbers = sortrows([satelliteNumbers',p1_numbers],1);
 %% Main loop steps 1-14
 % Calculates variables needed for correction iterations
 count = 1;
-Lmat = ones(length(satNumMatch),1);
-Amat = ones(length(satNumMatch),4);
-Xs = ones(length(satNumMatch),1);
-Ys = ones(length(satNumMatch),1);
-Zs = ones(length(satNumMatch),1);
-rho = ones(length(satNumMatch),1);
-P1 = ones(length(satNumMatch),1);
-dtsL1_with_dtr = ones(length(satNumMatch),1);
-tAtoS = ones(length(satNumMatch),1);
-v = ones(length(satNumMatch),2);
-
+% Lmat = ones(length(satNumMatch),1);
+% Amat = ones(length(satNumMatch),4);
+% Xs = ones(length(satNumMatch),1);
+% Ys = ones(length(satNumMatch),1);
+% Zs = ones(length(satNumMatch),1);
+% rho = ones(length(satNumMatch),1);
+% P1 = ones(length(satNumMatch),1);
+% dtsL1_with_dtr = ones(length(satNumMatch),1);
+% tAtoS = ones(length(satNumMatch),1);
+% v = ones(length(satNumMatch),2);
+%%
 for i = 1:length(satNumMatch)
     %% Steps 1-14 done inside
     if cell2mat(satNumMatch(i))==sortedSatelliteNumbers(count,1)
         [ Lmat(count,1), ...
-            Amat(count,:),...
-            rho(count,:),...
-            Xs(count,:),Ys(count,:),Zs(count,:),...
-            P1(count,:),...
-            dtsL1_with_dtr(count,:),...
-            tAtoS(count,:)]...
+            Amat(count,1:4),...
+            rho(count,1),...
+            Xs(count,1),Ys(count,1),Zs(count,1),...
+            P1(count,1),...
+            dtsL1_with_dtr(count,1),...
+            tAtoS(count,1)]...
             = satLandP( i,sortedSatelliteNumbers(count,2),navfiles,XA0,YA0,ZA0,nday,nhours,nminutes,nseconds);
         count = count + 1;
     else
